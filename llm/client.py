@@ -1,6 +1,13 @@
 import logging
 from openai import AsyncOpenAI
-from config import OPENROUTER_API_KEY, LLM_MODEL, LLM_TEMPERATURE, LLM_MAX_TOKENS
+from config import (
+    OPENROUTER_API_KEY,
+    LLM_MODEL,
+    LLM_TEMPERATURE,
+    LLM_MAX_TOKENS,
+    OPENROUTER_HTTP_REFERER,
+    OPENROUTER_APP_TITLE,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -12,9 +19,16 @@ def get_client():
     """Получение клиента OpenRouter с ленивой инициализацией"""
     global _client
     if _client is None:
+        headers = {}
+        if OPENROUTER_HTTP_REFERER:
+            headers["HTTP-Referer"] = OPENROUTER_HTTP_REFERER
+        if OPENROUTER_APP_TITLE:
+            headers["X-Title"] = OPENROUTER_APP_TITLE
+
         _client = AsyncOpenAI(
             base_url="https://openrouter.ai/api/v1",
             api_key=OPENROUTER_API_KEY,
+            default_headers=headers or None,
         )
     return _client
 
