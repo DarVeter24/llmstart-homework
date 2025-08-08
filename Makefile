@@ -1,4 +1,4 @@
-.PHONY: install test run stop clean dev
+.PHONY: install test run stop clean dev docker-build docker-run docker-stop
 
 # Установка зависимостей через uv
 install:
@@ -42,3 +42,19 @@ help:
 	@echo "  stop        - Stop the bot"
 	@echo "  clean       - Clean temporary files"
 	@echo "  check-config - Check configuration"
+	@echo "  docker-build - Build docker image"
+	@echo "  docker-run   - Run docker container"
+	@echo "  docker-stop  - Stop docker container"
+
+# Docker
+IMAGE_NAME ?= llmstart-bot:latest
+CONTAINER_NAME ?= llmstart-bot
+
+docker-build:
+	docker build -t $(IMAGE_NAME) .
+
+docker-run:
+	docker run --rm -d --name $(CONTAINER_NAME) --env-file .env $(IMAGE_NAME)
+
+docker-stop:
+	- docker stop $(CONTAINER_NAME)
